@@ -22,15 +22,15 @@ function! DoBlockA()
   exec "normal! e/\\v\\_s+/e+1\<cr>"
   let middle_pos = getpos('.')
   let lnum = middle_pos[1]
-  let col = middle_pos[2]
+  let base_col = middle_pos[2]
+  let last_nonblank_line = lnum
   " https://stackoverflow.com/a/13372706/1364288
   while lnum <= line('$')
-      if s:IsLineNumEmpty(lnum)
-          echo getline(lnum)
-          echo "empty line"
-      else
+      if !s:IsLineNumEmpty(lnum)
+          let first_nonblank_col = s:FirstNonBlankLineNum(lnum)
           echo getline(lnum)
           echo "non-empty line"
+          echo "first non blank" first_nonblank_col
       endif
       let lnum = lnum + 1
   endwhile
@@ -40,8 +40,12 @@ endfunction
 
 " https://stackoverflow.com/questions/25438985/vimscript-regex-empty-line
 function! s:IsLineNumEmpty(lnum)
-    echo "the index" a:lnum match(getline(a:lnum), "\\v^\\s*$")
     return match(getline(a:lnum), "\\v^\\s*$") != -1
+endfu
+
+" https://stackoverflow.com/questions/25438985/vimscript-regex-empty-line
+function! s:FirstNonBlankLineNum(lnum)
+    return match(getline(a:lnum), "\\v\\S")
 endfu
 
 "
