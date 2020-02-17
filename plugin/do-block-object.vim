@@ -49,6 +49,9 @@ function! DoBlockA()
                         elseif current_line[current_line_col] == ')'
                             let close_brace_count = close_brace_count + 1
                             let current_line_col = current_line_col + 1
+                            if close_brace_count > open_brace_count
+                               return ['v', head_pos, [head_pos[0], lnum, current_line_col]] 
+                            endif
                             echom "close )" close_brace_count
                         endif
                    endif
