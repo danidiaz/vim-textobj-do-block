@@ -29,7 +29,7 @@ function! DoBlockA()
   " https://stackoverflow.com/a/13372706/1364288
   while lnum <= line('$')
       if !s:IsLineNumEmpty(lnum)
-          let first_nonblank_col = s:FirstNonBlankLineNum(lnum)
+          let first_nonblank_col = s:FirstNonBlankLineNum(lnum, lnum == head_pos[1] ? base_col : 1)
           if first_nonblank_col < base_col
                echom "found!" getline(lnum)
                echom "base_col" base_col
@@ -43,12 +43,12 @@ function! DoBlockA()
                    let current_line_col = match(current_line,"\\v[()]",current_line_col)
                    if current_line_col != -1
                         if current_line[current_line_col] == '('
-                            let open_brace_count = open_brace_count + 1
-                            let current_line_col = current_line_col + 1
+                            let open_brace_count += 1
+                            let current_line_col += 1
                             echom "open (" open_brace_count
                         elseif current_line[current_line_col] == ')'
-                            let close_brace_count = close_brace_count + 1
-                            let current_line_col = current_line_col + 1
+                            let close_brace_count += 1
+                            let current_line_col += 1
                             if close_brace_count > open_brace_count
                                return ['v', head_pos, [head_pos[0], lnum, current_line_col]] 
                             endif
@@ -63,7 +63,7 @@ function! DoBlockA()
           echo "first non blank col" first_nonblank_col
           let last_nonblank_line = lnum
       endif
-      let lnum = lnum + 1
+      let lnum += 1
   endwhile
   return ['v', head_pos, [head_pos[0], last_nonblank_line, strlen(getline(last_nonblank_line))]] 
 endfunction
@@ -74,10 +74,15 @@ function! s:IsLineNumEmpty(lnum)
 endfu
 
 " https://stackoverflow.com/questions/25438985/vimscript-regex-empty-line
-function! s:FirstNonBlankLineNum(lnum)
+" hide the line/buffer start column distinction under this function
+function! s:FirstNonBlankLineNum(lnum,base_col)
     " docs lnum and col are the position in the buffer.  The first column is 1.
-    return match(getline(a:lnum), "\\v\\S") + 1
+    return match(getline(a:lnum), "\\v\\S",a:base_col - 1) + 1
 endfu
+
+" problems: deleting closing parentheses
+" correct do is not deleted if cursor is in the d
+
 
 "
 "   normal! ^
@@ -90,3 +95,4 @@ endfu
 "   \ ? ['v', head_pos, tail_pos]
 "   \ : 0
 " endfunction
+"
