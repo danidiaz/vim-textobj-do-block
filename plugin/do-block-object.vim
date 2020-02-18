@@ -48,10 +48,10 @@ function! DoBlockA()
                             echom "open (" open_brace_count
                         elseif current_line[current_line_col] == ')'
                             let close_brace_count += 1
-                            let current_line_col += 1
                             if close_brace_count > open_brace_count
                                return ['v', head_pos, [head_pos[0], lnum, current_line_col]] 
                             endif
+                            let current_line_col += 1
                             echom "close )" close_brace_count
                         endif
                    endif
@@ -80,7 +80,6 @@ function! s:FirstNonBlankLineNum(lnum,base_col)
     return match(getline(a:lnum), "\\v\\S",a:base_col - 1) + 1
 endfu
 
-" problems: deleting closing parentheses
 " correct do is not deleted if cursor is in the d
 
 
