@@ -26,7 +26,7 @@ function! DoBlockA()
   let middle_pos = getpos('.')
   let lnum = middle_pos[1]
   let base_col = middle_pos[2]
-  let last_nonblank_line = lnum
+  let last_nonblank_lnum = lnum
   let open_brace_count = 0
   let close_brace_count = 0
   " https://stackoverflow.com/a/13372706/1364288
@@ -37,8 +37,8 @@ function! DoBlockA()
                echom "found!" getline(lnum)
                echom "base_col" base_col
                echom "first_nonblank_col" first_nonblank_col
-               echom [head_pos[0], last_nonblank_line,strlen(getline(last_nonblank_line))]
-               return ['v', head_pos, [head_pos[0], last_nonblank_line, strlen(getline(last_nonblank_line))]] 
+               echom [head_pos[0], last_nonblank_lnum,strlen(getline(last_nonblank_lnum))]
+               return ['v', head_pos, [head_pos[0], last_nonblank_lnum, strlen(getline(last_nonblank_lnum))]] 
           else
                let current_line_col = first_nonblank_col - 1
                let current_line = getline(lnum) 
@@ -64,11 +64,11 @@ function! DoBlockA()
           echo getline(lnum)
           echo "non-empty line"
           echo "first non blank col" first_nonblank_col
-          let last_nonblank_line = lnum
+          let last_nonblank_lnum = lnum
       endif
       let lnum += 1
   endwhile
-  return ['v', head_pos, [head_pos[0], last_nonblank_line, strlen(getline(last_nonblank_line))]] 
+  return ['v', head_pos, [head_pos[0], last_nonblank_lnum, strlen(getline(last_nonblank_lnum))]] 
 endfunction
 
 " https://stackoverflow.com/questions/25438985/vimscript-regex-empty-line
