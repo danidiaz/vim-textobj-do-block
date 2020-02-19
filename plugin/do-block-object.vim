@@ -1,8 +1,8 @@
 call textobj#user#plugin('doblock', {
 \   'doblock': {
-\     'select-a-function': 'DoBlockA',
+\     'select-a-function': 'TextObjectDoBlockA',
 \     'select-a': 'ad',
-\     'select-i-function': 'DoBlockI',
+\     'select-i-function': 'TextObjectDoBlockI',
 \     'select-i': 'id',
 \   },
 \ })
@@ -15,11 +15,11 @@ call textobj#user#plugin('doblock', {
 " https://vi.stackexchange.com/questions/18206/get-the-column-that-the-cursor-is-on-in-vimscript
 " https://superuser.com/questions/723621/how-can-i-check-if-the-cursor-is-at-the-end-of-a-line
 
-function DoBlockA()
+function TextObjectDoBlockA()
     return s:DoBlock({ do_pos, inner_pos -> do_pos })
 endfunction
 
-function DoBlockI()
+function TextObjectDoBlockI()
     return s:DoBlock({ do_pos, inner_pos -> inner_pos })
 endfunction
 
@@ -51,7 +51,7 @@ function s:DoBlock(select_start_pos)
   let lnum = inner_pos[1]
   let base_col = inner_pos[2]
   let last_nonblank_lnum = lnum
-  let brace_balance = 0
+  let counter = s:BraceCounter()
   " https://stackoverflow.com/a/13372706/1364288
   while lnum <= line('$')
       let first_nonblank_cnum = 
@@ -61,32 +61,44 @@ function s:DoBlock(select_start_pos)
       elseif first_nonblank_cnum < base_col
            return IntervalEndingAtFullLine(last_nonblank_lnum)
       else
-           let current_col_index = first_nonblank_cnum - 1
-           let current_line = getline(lnum) 
-           while v:true
-               let current_col_index = 
-                      \ match(current_line,"\\v[()]",current_col_index)
-               if current_col_index == -1
-                   break
-               else
-                   if current_line[current_col_index] == '('
-                       let brace_balance += 1
-                       let current_col_index += 1
-                   elseif current_line[current_col_index] == ')'
-                       let brace_balance -= 1
-                       if brace_balance < 0
-                          return IntervalEndingAt(lnum, current_col_index)
-                       endif
-                       let current_col_index += 1
-                   endif
-               endif
-           endwhile
+           let before_brace = counter.count(lnum,first_nonblank_cnum)
+           if before_brace != -1
+                return IntervalEndingAt(lnum, before_brace)
+           endif
            let last_nonblank_lnum = lnum
            let lnum += 1
       endif
   endwhile
   return IntervalEndingAtFullLine(last_nonblank_lnum)
 endfunction
+
+function s:BraceCounter()
+    return { 'balance' : 0, 'count' : function("s:CountBraces") }
+endfunction
+
+function s:CountBraces(lnum,first_nonblank_cnum) dict
+   let current_line = getline(a:lnum) 
+   let current_col_index = a:first_nonblank_cnum - 1
+   while v:true
+       let current_col_index = 
+              \ match(current_line,"\\v[()]",current_col_index)
+       if current_col_index == -1
+           return current_col_index
+       else
+           if current_line[current_col_index] == '('
+               let self.balance = self.balance + 1
+               let current_col_index += 1
+           elseif current_line[current_col_index] == ')'
+               let self.balance = self.balance - 1
+               if self.balance < 0
+                  return current_col_index
+               endif
+               let current_col_index += 1
+           endif
+       endif
+   endwhile
+endfunction
+
 
 " https://stackoverflow.com/questions/25438985/vimscript-regex-empty-line
 " hide the line/buffer start column distinction under this function
