@@ -9,14 +9,17 @@ call textobj#user#plugin('doblock', {
 " https://developer.ibm.com/articles/l-vim-script-1/
 " https://learnvimscriptthehardway.stevelosh.com/chapters/21.html
 
-" todo: handle dos in the same line
-" todo: handle paretheses
-"
-" next step: use match() to find col of first non-blank in line
-" next step: use match() to find if there are parentheses in line
-" the level of parentheres should be a global setting...
+" https://vi.stackexchange.com/questions/18206/get-the-column-that-the-cursor-is-on-in-vimscript
+" https://superuser.com/questions/723621/how-can-i-check-if-the-cursor-is-at-the-end-of-a-line
+
 function! DoBlockA()
-  exec "normal! be?\\<do\\>\<cr>"
+  " https://stackoverflow.com/questions/1115447/how-can-i-get-the-word-under-the-cursor-and-the-text-of-the-current-line-in-vim
+  " https://stackoverflow.com/questions/23323747/vim-vimscript-get-exact-character-under-the-cursor
+  let word_under_cursor = expand("<cword>")
+  if word_under_cursor == "do"
+      normal! w
+  endif
+  exec "normal! ?\\<do\\>\<cr>"
   let head_pos = getpos('.')
   " :help \_
   exec "normal! e/\\v\\_s+/e+1\<cr>"
@@ -79,9 +82,6 @@ function! s:FirstNonBlankLineNum(lnum,base_col)
     " docs lnum and col are the position in the buffer.  The first column is 1.
     return match(getline(a:lnum), "\\v\\S",a:base_col - 1) + 1
 endfu
-
-" correct do is not deleted if cursor is in the d
-
 
 "
 "   normal! ^
