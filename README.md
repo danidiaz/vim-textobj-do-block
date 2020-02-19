@@ -4,9 +4,9 @@ A text object for Haskell's [do-notation](https://en.wikibooks.org/wiki/Haskell/
 
 Implemented with [vim-textobj-user](https://github.com/kana/vim-textobj-user), so you should install it as well.
 
-- `ad` do-block including the `do` keyword.
+- `ad`: do-block including the `do` keyword.
 
-- `id` the statements of a do-block, without the `do` keyword.
+- `id`: the statements of a do-block, without the `do` keyword.
 
 do-blocks can be delimited by braces. The selection will stop at any closing brace that doesn't match an opening brace lying inside the do-block.
 
