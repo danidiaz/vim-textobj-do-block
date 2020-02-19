@@ -66,7 +66,9 @@ function s:DoBlock(select_start_pos)
            while v:true
                let current_col_index = 
                       \ match(current_line,"\\v[()]",current_col_index)
-               if current_col_index != -1
+               if current_col_index == -1
+                   break
+               else
                    if current_line[current_col_index] == '('
                        let brace_balance += 1
                        let current_col_index += 1
@@ -77,8 +79,6 @@ function s:DoBlock(select_start_pos)
                        endif
                        let current_col_index += 1
                    endif
-               else
-                   break
                endif
            endwhile
            let last_nonblank_lnum = lnum
