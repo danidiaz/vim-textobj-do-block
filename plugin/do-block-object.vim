@@ -49,16 +49,16 @@ function s:DoBlock(select_start_pos)
         \ { lnum_end -> IntervalEndingAt(lnum_end,col([lnum_end,'$'])-1) }
 
   let lnum = inner_pos[1]
-  let base_col = inner_pos[2]
+  let base_cnum = inner_pos[2]
   let last_nonblank_lnum = lnum
   let counter = s:BraceCounter()
   " https://stackoverflow.com/a/13372706/1364288
   while lnum <= line('$')
       let first_nonblank_cnum = 
-            \ s:FirstNonBlankLineNum(lnum, lnum == do_pos[1] ? base_col : 1)
+            \ s:FirstNonBlankLineNum(lnum, lnum == do_pos[1] ? base_cnum : 1)
       if first_nonblank_cnum == 0
            let lnum += 1
-      elseif first_nonblank_cnum < base_col
+      elseif first_nonblank_cnum < base_cnum
            return IntervalEndingAtFullLine(last_nonblank_lnum)
       else
            let before_brace = counter.count(lnum,first_nonblank_cnum)
@@ -103,7 +103,7 @@ endfunction
 " https://stackoverflow.com/questions/25438985/vimscript-regex-empty-line
 " hide the line/buffer start column distinction under this function
 " returns: cnum of the first non-blank character, 0 if no non-blank character is found
-function s:FirstNonBlankLineNum(lnum,base_col)
+function s:FirstNonBlankLineNum(lnum,base_cnum)
     " docs lnum and col are the position in the buffer.  The first column is 1.
-    return match(getline(a:lnum), "\\v\\S",a:base_col - 1) + 1
+    return match(getline(a:lnum), "\\v\\S",a:base_cnum - 1) + 1
 endfu
