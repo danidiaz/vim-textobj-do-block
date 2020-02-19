@@ -31,53 +31,48 @@ function! DoBlockA()
   let close_brace_count = 0
   " https://stackoverflow.com/a/13372706/1364288
   while lnum <= line('$')
-      if !s:IsLineNumEmpty(lnum)
-          let first_nonblank_col = s:FirstNonBlankLineNum(lnum, lnum == head_pos[1] ? base_col : 1)
-          if first_nonblank_col < base_col
-               echom "found!" getline(lnum)
-               echom "base_col" base_col
-               echom "first_nonblank_col" first_nonblank_col
-               echom [head_pos[0], last_nonblank_lnum,strlen(getline(last_nonblank_lnum))]
-               return ['v', head_pos, [head_pos[0], last_nonblank_lnum, strlen(getline(last_nonblank_lnum))]] 
-          else
-               let current_line_col = first_nonblank_col - 1
-               let current_line = getline(lnum) 
-               while current_line_col != -1
-                   let current_line_col = match(current_line,"\\v[()]",current_line_col)
-                   if current_line_col != -1
-                        if current_line[current_line_col] == '('
-                            let open_brace_count += 1
-                            let current_line_col += 1
-                            echom "open (" open_brace_count
-                        elseif current_line[current_line_col] == ')'
-                            let close_brace_count += 1
-                            if close_brace_count > open_brace_count
-                               return ['v', head_pos, [head_pos[0], lnum, current_line_col]] 
-                            endif
-                            let current_line_col += 1
-                            echom "close )" close_brace_count
+      let first_nonblank_cnum = s:FirstNonBlankLineNum(lnum, lnum == head_pos[1] ? base_col : 1)
+      if first_nonblank_cnum == 0
+           let lnum += 1
+      elseif first_nonblank_cnum < base_col
+           echom "found!" getline(lnum)
+           echom "base_col" base_col
+           echom "first_nonblank_cnum" first_nonblank_cnum
+           echom [head_pos[0], last_nonblank_lnum,strlen(getline(last_nonblank_lnum))]
+           return ['v', head_pos, [head_pos[0], last_nonblank_lnum, strlen(getline(last_nonblank_lnum))]] 
+      else
+           let current_line_col = first_nonblank_cnum - 1
+           let current_line = getline(lnum) 
+           while current_line_col != -1
+               let current_line_col = match(current_line,"\\v[()]",current_line_col)
+               if current_line_col != -1
+                    if current_line[current_line_col] == '('
+                        let open_brace_count += 1
+                        let current_line_col += 1
+                        echom "open (" open_brace_count
+                    elseif current_line[current_line_col] == ')'
+                        let close_brace_count += 1
+                        if close_brace_count > open_brace_count
+                           return ['v', head_pos, [head_pos[0], lnum, current_line_col]] 
                         endif
-                   endif
-               endwhile
-               echom "foo"
-          endif
-          echo getline(lnum)
-          echo "non-empty line"
-          echo "first non blank col" first_nonblank_col
-          let last_nonblank_lnum = lnum
+                        let current_line_col += 1
+                        echom "close )" close_brace_count
+                    endif
+               endif
+           endwhile
+           echo getline(lnum)
+           echo "non-empty line"
+           echo "first non blank col" first_nonblank_cnum
+           let last_nonblank_lnum = lnum
+           let lnum += 1
       endif
-      let lnum += 1
   endwhile
   return ['v', head_pos, [head_pos[0], last_nonblank_lnum, strlen(getline(last_nonblank_lnum))]] 
 endfunction
 
 " https://stackoverflow.com/questions/25438985/vimscript-regex-empty-line
-function! s:IsLineNumEmpty(lnum)
-    return match(getline(a:lnum), "\\v^\\s*$") != -1
-endfu
-
-" https://stackoverflow.com/questions/25438985/vimscript-regex-empty-line
 " hide the line/buffer start column distinction under this function
+" returns: cnum of the first non-blank character, 0 if no non-blank character is found
 function! s:FirstNonBlankLineNum(lnum,base_col)
     " docs lnum and col are the position in the buffer.  The first column is 1.
     return match(getline(a:lnum), "\\v\\S",a:base_col - 1) + 1
