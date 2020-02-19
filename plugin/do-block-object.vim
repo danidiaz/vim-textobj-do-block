@@ -30,8 +30,12 @@ function s:DoBlock(select_start_pos)
   if word_under_cursor == "do"
       normal! w
   endif
-  exec "normal! ?\\<do\\>\<cr>"
+
+  for i in range(v:count1)
+      exec "normal! ?\\<do\\>\<cr>"
+  endfor
   let do_pos = getpos('.')
+
   " :help \_
   exec "normal! e/\\v\\_s+/e+1\<cr>"
   let inner_pos = getpos('.')
@@ -57,21 +61,24 @@ function s:DoBlock(select_start_pos)
       elseif first_nonblank_cnum < base_col
            return IntervalEndingAtFullLine(last_nonblank_lnum)
       else
-           let current_line_col = first_nonblank_cnum - 1
+           let current_col_index = first_nonblank_cnum - 1
            let current_line = getline(lnum) 
-           while current_line_col != -1
-               let current_line_col = match(current_line,"\\v[()]",current_line_col)
-               if current_line_col != -1
-                    if current_line[current_line_col] == '('
-                        let brace_balance += 1
-                        let current_line_col += 1
-                    elseif current_line[current_line_col] == ')'
-                        let brace_balance -= 1
-                        if brace_balance < 0
-                           return IntervalEndingAt(lnum, current_line_col)
-                        endif
-                        let current_line_col += 1
-                    endif
+           while v:true
+               let current_col_index = 
+                      \ match(current_line,"\\v[()]",current_col_index)
+               if current_col_index != -1
+                   if current_line[current_col_index] == '('
+                       let brace_balance += 1
+                       let current_col_index += 1
+                   elseif current_line[current_col_index] == ')'
+                       let brace_balance -= 1
+                       if brace_balance < 0
+                          return IntervalEndingAt(lnum, current_col_index)
+                       endif
+                       let current_col_index += 1
+                   endif
+               else
+                   break
                endif
            endwhile
            let last_nonblank_lnum = lnum
