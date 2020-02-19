@@ -47,18 +47,14 @@ function s:DoBlock(select_start_pos)
   let lnum = inner_pos[1]
   let base_col = inner_pos[2]
   let last_nonblank_lnum = lnum
-  let open_brace_count = 0
-  let close_brace_count = 0
+  let brace_balance = 0
   " https://stackoverflow.com/a/13372706/1364288
   while lnum <= line('$')
-      let first_nonblank_cnum = s:FirstNonBlankLineNum(lnum, lnum == do_pos[1] ? base_col : 1)
+      let first_nonblank_cnum = 
+            \ s:FirstNonBlankLineNum(lnum, lnum == do_pos[1] ? base_col : 1)
       if first_nonblank_cnum == 0
            let lnum += 1
       elseif first_nonblank_cnum < base_col
-           echom "found!" getline(lnum)
-           echom "base_col" base_col
-           echom "first_nonblank_cnum" first_nonblank_cnum
-           echom [do_pos[0], last_nonblank_lnum,strlen(getline(last_nonblank_lnum))]
            return IntervalEndingAtFullLine(last_nonblank_lnum)
       else
            let current_line_col = first_nonblank_cnum - 1
@@ -67,22 +63,17 @@ function s:DoBlock(select_start_pos)
                let current_line_col = match(current_line,"\\v[()]",current_line_col)
                if current_line_col != -1
                     if current_line[current_line_col] == '('
-                        let open_brace_count += 1
+                        let brace_balance += 1
                         let current_line_col += 1
-                        echom "open (" open_brace_count
                     elseif current_line[current_line_col] == ')'
-                        let close_brace_count += 1
-                        if close_brace_count > open_brace_count
+                        let brace_balance -= 1
+                        if brace_balance < 0
                            return IntervalEndingAt(lnum, current_line_col)
                         endif
                         let current_line_col += 1
-                        echom "close )" close_brace_count
                     endif
                endif
            endwhile
-           echo getline(lnum)
-           echo "non-empty line"
-           echo "first non blank col" first_nonblank_cnum
            let last_nonblank_lnum = lnum
            let lnum += 1
       endif
@@ -97,16 +88,3 @@ function s:FirstNonBlankLineNum(lnum,base_col)
     " docs lnum and col are the position in the buffer.  The first column is 1.
     return match(getline(a:lnum), "\\v\\S",a:base_col - 1) + 1
 endfu
-
-"
-"   normal! ^
-"   let do_pos = getpos('.')
-"   normal! g_
-"   let tail_pos = getpos('.')
-"   let non_blank_char_exists_p = getline('.')[do_pos[2] - 1] !~# '\s'
-"   return
-"   \ non_blank_char_exists_p
-"   \ ? ['v', do_pos, tail_pos]
-"   \ : 0
-" endfunction
-"
