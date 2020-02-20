@@ -1,15 +1,71 @@
-*textobj-do-block.txt*  do-block text object for Haskell's do-notation
+*textobj-do-block.txt*	A do-block text object for Haskell's do-notation
 
-CONTENTS                                        *textobj-do-block-contents*
+CONTENTS					     *textobj-do-block-contents*
 
-Introduction            |textobj-do-block-introduction|
+Introduction		|textobj-do-block-introduction|
+Mappings		|textobj-do-block-mappings|
+Caveats			|textobj-do-block-caveats|
+Changelog		|textobj-do-block-changelog|
 
 ==============================================================================
-INTRODUCTION                                    *textobj-do-block-introduction*
+INTRODUCTION					 *textobj-do-block-introduction*
 
-*textobj-do-block* is a Vim plugin that defines a do-block text object.
+textobj-do-block is a Vim plugin that defines a do-block text object.
 do-blocks are part of the syntax of the Haskell programming language.
 
+The text object is associated to .hs files.
+
+The plugin has a dependency on the *texobj-user* plugin.
+
+==============================================================================
+MAPPINGS					     *textobj-do-block-mappings*
+
+							    *v_ad* *ad*  
+ad	    do-block including the "do" keyword.
+
+							    *v_id* *id*  
+id	    do-block without including the "do" keyword itself.
+
+do-blocks might be delimited by braces. The selection will stop at any
+closing brace that doesn't match an opening brace lying inside the do-block.
+For example:
+>
+    somefunc (someotherfunc $ do 
+	foo
+	(this is included)
+	bar) thisisnotincluded
+>
+Typing dad when the cursor is in foo will result in
+>
+    somefunc (someotherfunc $ ) thisisnotincluded
+>
+A |count| can be given. Giving a count of n means that we will search
+backwards for the n-th textual occurrence of a do keyword, and select the
+corresponding block. For example:
+>
+    do do aaa
+	  bbb
+       do ccc
+	  ddd
+>
+Typing d2ad when the cursor is in ddd will result in 
+>
+    do 
+       do ccc
+	  ddd
+>
+==============================================================================
+CAVEATS						      *textobj-do-block-caveats*
+
+The do keyword inside comments and string literals can confuse this plugin.
+
+braces inside comments and string literals can confuse this plugin.
+
+==============================================================================
+CHANGELOG					    *textobj-do-block-changelog*
+
+1.0.0	2020-02-20			      *textobj-do-block-changelog-1.0.0*
+	- First release.
 
 ==============================================================================
 vim:tw=78:ts=8:ft=help:norl:fen:fdl=0:fdm=marker:noet:
