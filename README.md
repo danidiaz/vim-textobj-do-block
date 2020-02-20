@@ -25,6 +25,8 @@ For more information, please see the [documentation](doc/textobj-do-block.txt).
 - `:h <cword>`
 - `:h /\>`
 - `:h \_`
+- `:h count`
+- `:h v:count`
 - `:h magic`
 - `:h lambda`
 - `:h func-closure`
