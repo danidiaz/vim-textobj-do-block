@@ -1,0 +1,15 @@
+*textobj-do-block.txt*  do-block text object for Haskell's do-notation
+
+CONTENTS                                        *textobj-do-block-contents*
+
+Introduction            |textobj-do-block-introduction|
+
+==============================================================================
+INTRODUCTION                                    *textobj-do-block-introduction*
+
+*textobj-do-block* is a Vim plugin that defines a do-block text object.
+do-blocks are part of the syntax of the Haskell programming language.
+
+
+==============================================================================
+vim:tw=78:ts=8:ft=help:norl:fen:fdl=0:fdm=marker:noet:
