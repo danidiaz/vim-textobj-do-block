@@ -8,6 +8,13 @@ which you should install it as well.
 
 For more information, please see the [documentation](doc/textobj-do-block.txt).
 
+# to run the tests
+
+The tests are simplistica, but better than nothing.
+
+Go into the `tests` folder and execute `vim -S tests.vim`. Vim will open and
+error messages (if any) will show in the status bar.
+
 # stuff I found useful while writing this plugin
 
 - `:h usr_41`   
