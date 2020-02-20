@@ -46,4 +46,16 @@ call s:Test(testfiles,{'lnum':9,'cnum':6},'did')
 call assert_equalfile(testfiles.expected,testfiles.actual)
 bwipeout!
 
+" test spaces at end                                                                                   
+let testfiles = {'input':'test_004.hs','expected':'test_004_01_expected.hs','actual':'test_004_01_actual.hs'}
+call s:Test(testfiles,{'lnum':3,'cnum':6},'dad')                                                 
+call assert_equalfile(testfiles.expected,testfiles.actual)                                       
+bwipeout!                                                                                        
+
+" test count 2 and do-block end by decreased indentation
+let testfiles = {'input':'test_005.hs','expected':'test_005_01_expected.hs','actual':'test_005_01_actual.hs'}
+call s:Test(testfiles,{'lnum':3,'cnum':7},'d2ad')                                                 
+call assert_equalfile(testfiles.expected,testfiles.actual)                                       
+bwipeout!                                                                                        
+
 echo v:errors
