@@ -42,6 +42,6 @@ error messages (if any) will show in the status bar.
 - `:h funcref`
 - [A Test to Attest To](https://vimways.org/2019/a-test-to-attest-to/)
 - `:h testing` 
-- `:h assert_equal()` 
+- `:h assert_equalfile()` Annoyingly, accepts no description. 
 - `:h v:errors` 
 
