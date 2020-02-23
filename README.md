@@ -27,6 +27,7 @@ error messages (if any) will show in the status bar.
 - [Vimscript regex empty line](https://stackoverflow.com/questions/25438985/vimscript-regex-empty-line)
 - [How can I check if the cursor is at the end of a line?](https://superuser.com/questions/723621/how-can-i-check-if-the-cursor-is-at-the-end-of-a-line)
 - [Get the column that the cursor is on in vimscript](https://vi.stackexchange.com/questions/18206/get-the-column-that-the-cursor-is-on-in-vimscript)
+- [vimregex page](http://vimregex.com/)
 - `:h autoload`
 - `:h scriptnames`
 - `:h <cword>`
